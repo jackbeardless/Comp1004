@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Strength and Security Indicator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/zxcvbn@4.4.2/dist/zxcvbn.js"></script>
+    <style>
+        .form-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .password-strength-bar {
+            width: 100%;
+            height: 10px;
+            background-color: #ddd;
+        }
+        .strength-indicator {
+            height: 10px;
+            background-color: red;
+            width: 0%; /* Initial width */
+        }
+        #passwordStrengthText, #crackTime {
+            margin-top: 5px;
+        }
+        .actions {
+            display: flex;
+            margin-top: 10px;
+        }
+        input[type="text"], button {
+            padding: 10px;
+            margin-right: 5px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <div class="input-group">
+            <div class="actions">
+                <input type="text" id="passwordInput" placeholder="Enter password...">
+                <button onclick="generatePassword()">Generate</button>
+            </div>
+            <div class="password-strength-bar">
+                <div id="strengthIndicator" class="strength-indicator"></div>
+            </div>
+            <div id="passwordStrengthText">Weak</div>
+            <div id="crackTime">Instant</div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('passwordInput').addEventListener('input', function() {
+            const result = zxcvbn(this.value);
+            updatePasswordStrength(result);
+        });
+
+        function updatePasswordStrength(result) {
+            const strengthIndicator = document.getElementById('strengthIndicator');
+            const passwordStrengthText = document.getElementById('passwordStrengthText');
+            const crackTime = document.getElementById('crackTime');
+
+            // Update strength bar width and color
+            const strength = result.score;
+            const widthPercentage = strength * 25;
+            strengthIndicator.style.width = `${widthPercentage}%`;
+
+            // Define colors for different strength levels
+            const colors = ['red', 'orange', 'yellow', 'lightgreen', 'green'];
+            strengthIndicator.style.backgroundColor = colors[strength];
+
+            // Update strength text
+            const strengthTexts = ['Weak', 'Ok', 'Strong', 'Very Strong', 'Very Strong'];
+            passwordStrengthText.textContent = strengthTexts[strength];
+
+            // Display estimated crack time
+            crackTime.textContent = `Estimated crack time: ${result.crack_times_display.online_no_throttling_10_per_second}`;
+        }
+
+        function generatePassword() {
+            const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_+=[]{}";
+            const passwordLength = Math.floor(Math.random() * (20 - 12 + 1)) + 12;
+            let password = "";
+            for (let i = 0; i < passwordLength; i++) {
+                password += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            document.getElementById('passwordInput').value = password;
+            const result = zxcvbn(password);
+            updatePasswordStrength(result);
+        }
+    </script>
+</body>
+</html>
