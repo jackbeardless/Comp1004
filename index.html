@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Manager</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"></script>
+
+</head>
+<body>
+
+    <!-- Section for the login form -->
+    <div id="loginForm" class="login-panel">
+        <h2>Login to Your Account</h2>
+        <input type="text" id="username" placeholder="Username">
+        <input type="password" id="password" placeholder="Password">
+        <button onclick="login()">Login</button>
+    </div>
+
+    <div id="app" style="display: none;">
+        <!-- Password Form -->
+        <div id="password-form">
+            <h1>Add/Edit Password</h1>
+            <form onSubmit="savePassword(event)">
+                <input type="hidden" id="index">
+                <label for="appname">App Name:</label>
+                <input type="text" id="appname" required>
+                <label for="username">Username:</label>
+                <input type="text" id="username" required>
+                <label for="password">Password:</label>
+                <input type="password" id="password" required oninput="checkPasswordStrength()">
+
+
+
+                <button type="submit">Save</button>
+            </form>
+        </div>
+        
+        <!-- Password List -->
+        <div id="password-list">
+            <h1>Stored Passwords</h1>
+            <button onclick="exportToJsonFile()">Export JSON</button>
+            <input type="file" id="fileInput" onchange="importFromJsonFile(event)">
+            <table id="accounts">
+                <tr>
+                    <th>App Name</th>
+                    <th>Username</th>
+                    <th>Password</th>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div id="weakPasswordModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <h2>Weak Password Detected</h2>
+            <p>You have attempted to submit a weak password. Are you sure you want to do this?</p>
+            <button id="addWeakPassword">Add Weak (Not Recommended)</button>
+            <button id="generateSecurePassword">Generate Secure Password</button>
+            <button onclick="closeModal('weakPasswordModal')">Cancel</button>
+        </div>
+
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
